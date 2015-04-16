@@ -21,6 +21,7 @@ int main()
 		}
 		//covert string to char* maybe; yes the method below seems to have worked
 		char* in_cstr = new char[input.length()+1];
+		//char* in_cstr[input.length()+1]; doesn't work
 		strcpy(in_cstr, input.c_str());
 		
 		//tokenize words
@@ -32,9 +33,19 @@ int main()
 		token = strtok(in_cstr, delim); // &save_1);
 		//cout << "token: " << token << endl;
 		//char* path;
+		//cout << "c_string: " << token[0] << endl; testing
+		//cout << "c_string: " << token[1] << endl; testing
 		char* argv[1024];
 		int i = 0;
 		cout << "Tokens of input:" << endl;
+		//int x = strlen(token);
+		//cout << "x:" << x;
+		//for(int k = 0; k < x; k++)
+		//{
+			//cout << "k:" << k;
+			//cout << token[k] << endl;
+			//token = strtok(NULL, delim); //causes problems with loop
+		//}
 		while(token != NULL)
 		{
 			cout << token << endl;
@@ -45,7 +56,7 @@ int main()
 		int pid = fork();
 		if(pid == -1)
 		{
-			perror("fork");
+			perror("fork failed");
 		}
 		else if(pid != 0)
 		{
@@ -55,12 +66,17 @@ int main()
 		else if(pid == 0)
 		{
 			cout << "In child" << endl;
-			execvp(argv[0], argv);
-
+			if(execvp(argv[0], argv) != 0)
+			{
+				perror("execvp failed");
+			}
+			else
+			{
+				execvp(argv[0], argv);
+			}
 		}
-		//vector<string> words; //not sure if i need to do this
 	}
-
+	//currently if ls -a run then ls, ls -a still runs
 	//will give me login (e.g. lzhu012)
 	//char* login = getlogin();
 	//cout << login << endl;
