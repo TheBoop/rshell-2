@@ -1,5 +1,5 @@
 #include <iostream>
-#include <string>
+#include <string.h>
 #include <unistd.h> //execvp
 #include <stdio.h> //perror
 #include <errno.h> //perror
@@ -19,16 +19,24 @@ int main()
 		{
 			return 0;
 		}
+		//covert string to char* maybe; yes the method below seems to have worked
+		char* in_cstr = new char[input.length()+1];
+		strcpy(in_cstr, input.c_str());
+		
 		//tokenize words
 		char delim[] = " ";
-		char *token;
-		char *save_1;
-		token = strtok_r(input, delim, &save_1);
-		cout << "token: " << token << endl;
-		//for(int i = 0; token != NULL; i++)
-		//{
-		//	token = strtok_r(
-		//}
+		//char input_cstr[] = "ls"; delete me
+		char* token;
+		//char* save_1;
+		//strcpy(input_cstr, input.c_str());
+		token = strtok(in_cstr, delim); // &save_1);
+		//cout << "token: " << token << endl;
+		cout << "Tokens of input:" << endl;
+		while(token != NULL)
+		{
+			cout << token << endl;
+			token = strtok(NULL, delim);
+		}
 		//vector<string> words; //not sure if i need to do this
 	}
 
