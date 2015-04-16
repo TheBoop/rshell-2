@@ -26,10 +26,7 @@ int main()
 		
 		//tokenize words
 		char delim[] = " ";
-		//char input_cstr[] = "ls"; delete me
 		char* token;
-		//char* save_1;
-		//strcpy(input_cstr, input.c_str());
 		token = strtok(in_cstr, delim); // &save_1);
 		//cout << "token: " << token << endl;
 		//char* path;
