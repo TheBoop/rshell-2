@@ -9,27 +9,77 @@
 #include <sys/wait.h> //wait
 using namespace std;
 
+int connector(string& input)
+{
+	size_t com = input.find("#");
+	if(com != string::npos)
+	{
+		input.erase(com);
+		return 1;
+	}
+	size_t And = input.find("&");
+	And = input.find("&", And+1);
+	if(And != string::npos)
+	{
+		return 2;
+	}
+	//if(And != string::npos && input.at(And+1) == '&' && input.at(And+2) != '&')
+	//{
+	//	return 2;
+	//}
+	size_t Or = input.find('|');
+	if(Or != string::npos && input.at(Or+1) == '|' && input.at(Or+2) != '|')
+	{
+		return 3;
+	}
+	size_t End = input.find(";");
+	if(End != string::npos && input.at(End+1) == ';' && input.at(End+2) != ';')
+	{
+		return 4;
+	}
+	else
+	{
+		return -1;
+	}
+	//careful this only works for one connector at a time due to how its returned
+	//seems to work so far but why chars instead of "" i have no clue
+}
+
+
 int main()
 {
-	string input;	
 	while(1)
 	{
+		//Intial terminal output with login/hostname
 		char* login = getlogin();
-		//char name[64];
+		char name[64];
 		//int len = 64;
-		//int hostname = gethostname(); // how to use this??
-		cout << login << "@"  << "$ ";
+		gethostname(name, sizeof(name)); // how to use this??
+		cout << login << "@" << name  << "$ ";
+		string input;
 		getline(cin, input);
+
+		//dealing with connectors;
+		int what = connector(input);
+		if(what != -1)
+		{
+			cout << "connector checking: " << input << endl;
+		}
+		else
+		{
+			cout << "no connectors found: " << endl;
+		}
+
+
 		if(input == "exit")
 		{
 			return 0;
 		}
+		
 		//covert string to char* maybe; yes the method below seems to have worked
 		char* in_cstr = new char[input.length()+1];
 		//char* in_cstr[input.length()+1]; doesn't work
 		strcpy(in_cstr, input.c_str());
-		//char in_cstr[100];
-		//cin.getline(in_cstr, 100, '\n');
 
 		//int find = 0;
 		//int track = 0;
@@ -40,7 +90,7 @@ int main()
 		//}
 
 		//tokenize words
-		char delim[] = "  &&";
+		char delim[] = "  &&||;";
 		char* token;
 		token = strtok(in_cstr, delim); // &save_1);
 		//cout << "token: " << token << endl;
@@ -68,6 +118,8 @@ int main()
 			token = strtok(NULL, delim);
 		}
 		argv[i] = NULL; //fixes ls -a ls bug gotta put null char back
+
+		//Calling execvp
 		int pid = fork();
 		if(pid == -1)
 		{
@@ -98,9 +150,6 @@ int main()
 		delete[] in_cstr;
 		delete[] argv;
 	}
-	//currently if ls -a run then ls, ls -a still runs
-	//will give me login (e.g. lzhu012)
-	//char* login = getlogin();
-	//cout << login << endl;
 	return 0;
 }
+//bug: if execvp fails, exit has to be ran twice to work for some reason
