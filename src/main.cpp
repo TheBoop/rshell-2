@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <string.h>
-#include <stdlib.h>
+#include <stdlib.h> //exit
 #include <unistd.h> //execvp, fork, gethostname, getlogin
 #include <stdio.h> //perror
 #include <errno.h> //perror
