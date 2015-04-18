@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 #include <string.h>
 #include <stdlib.h> //exit
 #include <unistd.h> //execvp, fork, gethostname, getlogin
@@ -9,13 +10,12 @@
 #include <sys/wait.h> //wait
 using namespace std;
 
-int connector(string& input)
+void comment(string& input)
 {
 	size_t com = input.find("#");
 	if(com != string::npos)
 	{
 		input.erase(com);
-		return 1;
 	}
 }
 
@@ -25,18 +25,19 @@ int main()
 	while(1)
 	{
 		//Intial terminal output with login/hostname
+		string login;
 		if(getlogin() == NULL)
 		{
 			perror("getlogin() failed");
 		}
 		else
 		{
-			string login = getlogin();
+			login = getlogin();
 		}
 		char name[64];
 		if(gethostname(name, sizeof(name)) == -1)
 		{
-			perror("gethostname() failed")
+			perror("gethostname() failed");
 		}
 		else if(getlogin() != NULL)
 		{
@@ -52,22 +53,45 @@ int main()
 		{
 			return 0;
 		}
-		
-		//covert string to char* maybe; yes the method below seems to have worked
+
+		//Remove comments
+		comment(input);
+
+		//covert string to char*
 		char* in_cstr = new char[input.length()+1];
 		strcpy(in_cstr, input.c_str());
 
+		//Tracking connectors
+		int and_cnt = 0;
+		int or_cnt = 0;
+		for(unsigned k = 0; k < strlen(in_cstr); k++)
+		{
+			if(in_cstr[k] == '&' && k+1 < strlen(in_cstr) && in_cstr[k+1] == '&')
+			{
+				and_cnt = 1;
+			}
+			if(in_cstr[k] == '|' && k+1 < strlen(in_cstr) && in_cstr[k+1] == '|')
+			{
+				or_cnt = 1;
+			}
+		}
+
 		//tokenize words
-		char delim[] = "  &|;";
+		char delim[] = "&|;";
 		char* token;
-		token = strtok(in_cstr, delim); // &save_1);
+		char* token2;
+		char* save_1;
+		char* save_2;
+		token = strtok_r(in_cstr, delim, &save_1);
 		//cout << "token: " << token << endl;
 		//char* file;
 		//cout << "c_string: " << token[0] << endl; testing
 		//cout << "c_string: " << token[1] << endl; testing
-		char** argv = new char*[input.length()+1];
-		int i = 0;
-		cout << "Tokens of input:" << endl;
+		//
+		//char** argv = new char*[input.length()+1];
+		//int i = 0;
+		//cout << "Tokens of input:" << endl;
+		//
 		//int x = strlen(token);
 		//cout << "x:" << x;
 		//for(int k = 0; k < x; k++)
@@ -78,50 +102,94 @@ int main()
 			//x = strlen(token);
 			//k=0;
 		//}
+
 		while(token != NULL)
 		{
-			cout << token << endl;
-			argv[i] = token;
-			i++;
-			token = strtok(NULL, delim);
-		}
-		argv[i] = NULL; //fixes ls -a ls bug gotta put null char back
-
-		//Calling execvp
-		int pid = fork();
-		if(pid == -1)
-		{
-			perror("fork failed");
-			exit(1);
-		}
-		else if(pid > 0)
-		{
-			cout << "In parent, going to wait" << endl;
-			if(wait(0) == -1)
+			char* in_str2 = new char[strlen(token)+1];
+			in_str2 = token;
+			token2 = strtok_r(in_str2, " ", &save_2);
+			vector<string> temp;
+			while(token2 != NULL)
 			{
-				perror("wait failed");
+				temp.push_back(token2);
+				token2 = strtok_r(NULL, " ", &save_2);
+			}
+
+			char **argv = new char*[temp.size()+1];
+			for(unsigned i = 0; i < temp.size(); i++)
+			{
+				if(temp.at(i) == "exit")
+				{
+					exit(1);
+				}
+				argv[i] = new char[temp.at(i).size()+1];
+				strcpy(argv[i], temp.at(i).c_str());
+				argv1[temp.size()] = 0;
+			}
+
+			int pid = fork();
+			int status = 0;
+			if(pid == -1)
+			{
+				perror("fork failed");
+				exit(1);
+			}
+			else if(pid == 0)
+			{
+				if(execvp(argv[0], argv) != -1 && or_cnt == 1)
+				{
+					status = 10;
+					exit(1);
+				}
+				else if(execvp(argv[0], argv) == -1)
+				{
+					perror("execvp failed");
+					if(and_cnt == 1)
+					{
+						status = 10;
+						exit(1);
+					}
+					else if(or_cnt == 1)
+					{
+						cout << "or failed" << endl;
+						status = 1;
+						cout << status << endl;
+						exit(1);
+					}
+					exit(1);
+				}
+			}
+			else
+			{
+				if(wait(&status) == -1)
+				{
+					perror("wait failed");
+				}
+				else
+				{
+					if(status > 0 && and_cnt == 1)
+					{
+						break;
+					}
+					if(WEXITSTATUS(status) == 0 && or_cnt == 1)
+					{
+						cout << status << " or worked " << endl;
+						break;
+					}
+					else
+					{
+						token = strtok_r(NULL, delim, &save_1);
+					}
+				}
 			}
 		}
-		else if(pid == 0)
-		{
-			cout << "In child" << endl;
-
-			if(execvp(argv[0], argv) == -1)
-			{
-				perror("execvp failed");
-			}
-			//else
-			//{
-			//	execvp(argv[0], argv);
-			//}
-		}
-		delete[] in_cstr;
-		delete[] argv;
+		//delete[] in_cstr;
+		//delete[] in_str2;
 	}
-	return 0;
 }
 //nohlsearch
 //bug: if execvp fails, exit has to be ran twice to work for some reason
+//bug: &&& doesnt give error
 //IDEA
 //STEP 1:
 //LETS SAY WE HAVE     ls && ls
