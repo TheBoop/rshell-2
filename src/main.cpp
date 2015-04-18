@@ -17,32 +17,6 @@ int connector(string& input)
 		input.erase(com);
 		return 1;
 	}
-	size_t And = input.find("&");
-	And = input.find("&", And+1);
-	if(And != string::npos)
-	{
-		return 2;
-	}
-	//if(And != string::npos && input.at(And+1) == '&' && input.at(And+2) != '&')
-	//{
-	//	return 2;
-	//}
-	size_t Or = input.find('|');
-	if(Or != string::npos && input.at(Or+1) == '|' && input.at(Or+2) != '|')
-	{
-		return 3;
-	}
-	size_t End = input.find(";");
-	if(End != string::npos && input.at(End+1) == ';' && input.at(End+2) != ';')
-	{
-		return 4;
-	}
-	else
-	{
-		return -1;
-	}
-	//careful this only works for one connector at a time due to how its returned
-	//seems to work so far but why chars instead of "" i have no clue
 }
 
 
@@ -51,26 +25,29 @@ int main()
 	while(1)
 	{
 		//Intial terminal output with login/hostname
-		char* login = getlogin();
-		char name[64];
-		//int len = 64;
-		gethostname(name, sizeof(name)); // how to use this??
-		cout << login << "@" << name  << "$ ";
-		string input;
-		getline(cin, input);
-
-		//dealing with connectors;
-		int what = connector(input);
-		if(what != -1)
+		if(getlogin() == NULL)
 		{
-			cout << "connector checking: " << input << endl;
+			perror("getlogin() failed");
 		}
 		else
 		{
-			cout << "no connectors found: " << endl;
+			string login = getlogin();
+		}
+		char name[64];
+		if(gethostname(name, sizeof(name)) == -1)
+		{
+			perror("gethostname() failed")
+		}
+		else if(getlogin() != NULL)
+		{
+			cout << login << "@" << name  << "$ ";
 		}
 
-
+		//Getting input
+		string input;
+		getline(cin, input);
+		
+		//This wont work if its with connectors and other stuff
 		if(input == "exit")
 		{
 			return 0;
@@ -78,19 +55,10 @@ int main()
 		
 		//covert string to char* maybe; yes the method below seems to have worked
 		char* in_cstr = new char[input.length()+1];
-		//char* in_cstr[input.length()+1]; doesn't work
 		strcpy(in_cstr, input.c_str());
 
-		//int find = 0;
-		//int track = 0;
-		//find = in_cstr.find("&&");
-		//if(find > 0)
-		//{
-		//	track = 1;
-		//}
-
 		//tokenize words
-		char delim[] = "  &&||;";
+		char delim[] = "  &|;";
 		char* token;
 		token = strtok(in_cstr, delim); // &save_1);
 		//cout << "token: " << token << endl;
@@ -152,4 +120,35 @@ int main()
 	}
 	return 0;
 }
+//nohlsearch
 //bug: if execvp fails, exit has to be ran twice to work for some reason
+//IDEA
+//STEP 1:
+//LETS SAY WE HAVE     ls && ls
+//Tokenize with delimintors && ; ||
+//THEN WE HAVE TOKENS
+//     ls 
+// ls
+// STORE the first in one argv1
+// then second in another argv2
+// recurssviely do this until no delims are left
+// then tokenize AGAIN with " "
+// so for first argv1 we have ls
+// the second also ls
+// then we execvp firs the first argv
+// then we call execvp vp on the second but this time dependent on the first execvp
+// do this until all argvs are passed through
+// how to code this i have no idea, will it work i have no idea
+//
+// char* token;
+// token = strtok(in_cstr, "&")
+// token[0] = '    ls '
+// token[1] = ' ls'
+// each one of these tokens will become its own cstring
+// token1 = strtok(token, " ")
+// if(execvp(token1) == -1)
+// 	perrror("failed")
+// 	exit
+// else(execvp(token2) == -1)
+// recurrively call (token2, token1)
+// 
