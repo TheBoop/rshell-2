@@ -16,10 +16,15 @@ $ bin/rshell
 ```
 
 ##Known Bugs
-Connectors that are not doubles, e.g. && or || will not work properly
+Connectors that are not doubles, e.g. &&& or ||| will not work properly
 
-Invalid syscalls are not handles and will error
+Invalid commands will not display the same message as a normal terminal
 
-invalid executables are not handled
+Commands that start with a connector does not work like bash does.
+e.g. '$ & ls' or '$ && ls' or '$ ls &' or '$ ls &&' or any of sort of combination
+of that will not work like bash does.
+Instead those commands will run ls normally.
 
+echo "hello" doesnt output hello. Instead it outputs "hello"
 
+echo > file doesnt work

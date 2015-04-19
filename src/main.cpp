@@ -19,6 +19,22 @@ void comment(string& input)
 	}
 }
 
+void del_incstr(char* in_cstr)
+{
+	//cout << "deleting in_cstr" << endl;
+	delete[] in_cstr;
+}
+
+void del_argv(char** argv, int argv_sz)
+{
+	//cout << "deleting argv " << endl;
+	for(int j = 0; j < argv_sz+1; j++)
+	{
+		delete[] argv[j];
+	}
+	delete [] argv;
+	//cout << endl;
+}
 
 int main()
 {
@@ -49,10 +65,10 @@ int main()
 		getline(cin, input);
 		
 		//This wont work if its with connectors and other stuff
-		if(input == "exit")
-		{
-			return 0;
-		}
+		//if(input == "exit")
+		//{
+		//	return 0;
+		//}
 
 		//Remove comments
 		comment(input);
@@ -75,6 +91,7 @@ int main()
 				or_cnt = 1;
 			}
 		}
+		// dont need to track ; since anything after a connector is treated as new input
 
 		//tokenize words
 		char delim[] = "&|;";
@@ -87,11 +104,8 @@ int main()
 		while(token != NULL)
 		{
 			//cout << "Top of lopp" << endl;
-			//cout << "toke: " << token << endl;
-			char* in_str2 = new char[strlen(token)+1];
-			in_str2 = token;
-			token2 = strtok_r(in_str2, " ", &save_2);
-			//cout << "in_str2: " << in_str2 << endl;
+			//cout << "token: " << token << endl;
+			token2 = strtok_r(token, " ", &save_2);
 			//cout << "token2: " << token2 << endl;
 
 			vector<string> temp;
@@ -100,18 +114,20 @@ int main()
 				temp.push_back(token2);
 				token2 = strtok_r(NULL, " ", &save_2);
 			}
-			//cout << "contents of temp vector: ";
+			//cout << "contents of temp vector: " << temp.size() << " ";
 			//for(unsigned t = 0; t < temp.size(); t++)
 			//{
-			//	cout << temp[t] << " ";
+			//	cout << temp.at(t) << " ";
 			//}
 			//cout << endl;
 
-			char **argv = new char*[temp.size()+1];
+			char** argv = new char*[temp.size()+1];
 			for(unsigned i = 0; i < temp.size(); i++)
 			{
 				if(temp.at(i) == "exit")
 				{
+					delete[] argv;
+					del_incstr(in_cstr);
 					exit(1);
 				}
 				argv[i] = new char[temp.at(i).size()+1];
@@ -131,6 +147,9 @@ int main()
 			if(pid == -1)
 			{
 				perror("fork failed");
+				int sz = temp.size();
+				del_argv(argv, sz);
+				del_incstr(in_cstr);
 				exit(1);
 			}
 			else if(pid == 0)
@@ -141,20 +160,32 @@ int main()
 					perror("execvp failed");
 					if(or_cnt == 1)
 					{
-						status = 5;
-						exit(1);
+						status = 3;
+						int sz = temp.size();
+						del_argv(argv, sz);
+						del_incstr(in_cstr);
+						_exit(1);
 					}
 					if(and_cnt == 1)
 					{
-						status = 5;
-						exit(1);
+						status = 3;
+						int sz = temp.size();
+						del_argv(argv, sz);
+						del_incstr(in_cstr);
+						_exit(1);
 					}
+					int sz = temp.size();
+					del_argv(argv, sz);
+					del_incstr(in_cstr);
+					_exit(1);
 				}
 				else
 				{
 					if(or_cnt == 1)
 					{
-						status = 5;
+						status = 3;
+						int sz = temp.size();
+						del_argv(argv, sz);
 						break;
 					}
 				}
@@ -164,31 +195,47 @@ int main()
 				//cout << "in parent" << endl;
 				if(wait(&status) == -1)
 				{
-					perror("wait failed");
+					perror("Child still running");
 				}
 				else
 				{
-					if(WEXITSTATUS(status) != 0 && and_cnt == 1)
+					//cout << "in status check" << endl;
+					if(WIFEXITED(status))
 					{
-						break;
+						if(WEXITSTATUS(status) == 0 && or_cnt == 1)
+						{
+							//e.g. true || true/false 
+							//since arg1 returned true we dont need to run the second arg
+							//break out of loop and return
+							//cout << "exit status: " << WEXITSTATUS(status) << endl;
+							int sz = temp.size();
+							del_argv(argv, sz);
+							break;
+						}
+						if(WEXITSTATUS(status) != 0 && and_cnt == 1)
+						{
+							//e.g. false && true
+							//since arg1 is false, dont do second arg
+							//execvp will fail and child will have exited with 1
+							//In that case go in here
+							//break out of loop and return
+							//cout << "exit status: " << WEXITSTATUS(status) << endl;
+							int sz = temp.size();
+							del_argv(argv, sz);
+							break;
+						}
 					}
-					if(WEXITSTATUS(status) == 0 && or_cnt == 1)
-					{
-						break;
-					}
-					else
-					{
-						//if wait is sucessful, and no and is found no or is found
-						token = strtok_r(NULL, delim, &save_1);
-					}
+					//Take in the next argument if there is any
+					////Go back to the top and repeat the process
+					token = strtok_r(NULL, delim, &save_1);
 				}
 			}
+			int sz = temp.size();
+			del_argv(argv, sz);
 		}
-		delete[] in_cstr;
-		//delete[] in_str2;
+		del_incstr(in_cstr);
 	}
 	return 0;
 }
 //nohlsearch
-//bug: if execvp fails, exit has to be ran twice to work for some reason
 //bug: &&& doesnt give error
