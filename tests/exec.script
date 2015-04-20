@@ -1,0 +1,79 @@
+Script started on Sun 19 Apr 2015 05:51:02 PM PDT
+~
+lzhu012@hammer $ cd cs100
+~/cs100
+lzhu012@hammer $ cd rshell
+~/cs100/rshell
+lzhu012@hammer $ /bin[K[K[K[Kbin/rshell
+lzhu012@hammer.cs.ucr.edu$ # Testing a single command
+lzhu012@hammer.cs.ucr.edu$ ls
+bin  exec.script  LICENSE  Makefile  README.md	src  tests
+lzhu012@hammer.cs.ucr.edu$ # Testing a single command with flags
+lzhu012@hammer.cs.ucr.edu$ ls -a
+.  ..  bin  exec.script  .git  LICENSE	Makefile  README.md  src  tests
+lzhu012@hammer.cs.ucr.edu$ # Testing the && operator        connector
+lzhu012@hammer.cs.ucr.edu$ ls -a && pwd
+.  ..  bin  exec.script  .git  LICENSE	Makefile  README.md  src  tests
+/class/classes/lzhu012/cs100/rshell
+lzhu012@hammer.cs.ucr.edu$ false && pwd
+lzhu012@hammer.cs.ucr.edu$ pwd && false
+/class/classes/lzhu012/cs100/rshell
+lzhu012@hammer.cs.ucr.edu$ false && false
+lzhu012@hammer.cs.ucr.edu$         ls      &&     pwd
+bin  exec.script  LICENSE  Makefile  README.md	src  tests
+/class/classes/lzhu012/cs100/rshell
+lzhu012@hammer.cs.ucr.edu$ ls && pwd && ls
+bin  exec.script  LICENSE  Makefile  README.md	src  tests
+/class/classes/lzhu012/cs100/rshell
+bin  exec.script  LICENSE  Makefile  README.md	src  tests
+lzhu012@hammer.cs.ucr.edu$ # Testing the || connector
+lzhu012@hammer.cs.ucr.edu$ ls -a || pwd
+.  ..  bin  exec.script  .git  LICENSE	Makefile  README.md  src  tests
+lzhu012@hammer.cs.ucr.edu$ fales || pwd
+execvp failed: No such file or directory
+/class/classes/lzhu012/cs100/rshell
+lzhu012@hammer.cs.ucr.edu$ [wd   fas lse || pwd
+/class/classes/lzhu012/cs100/rshell
+lzhu012@hammer.cs.ucr.edu$ f pwd || false
+/class/classes/lzhu012/cs100/rshell
+lzhu012@hammer.cs.ucr.edu$ false || false
+lzhu012@hammer.cs.ucr.edu$ pwd || ls || ls -a
+/class/classes/lzhu012/cs100/rshell
+lzhu012@hammer.cs.ucr.edu$ # Testing the ; connector
+lzhu012@hammer.cs.ucr.edu$ ls -a && pwd; ls ;  ; ks  ls -a
+.  ..  bin  exec.script  .git  LICENSE	Makefile  README.md  src  tests
+/class/classes/lzhu012/cs100/rshell
+bin  exec.script  LICENSE  Makefile  README.md	src  tests
+.  ..  bin  exec.script  .git  LICENSE	Makefile  README.md  src  tests
+lzhu012@hammer.cs.ucr.edu$ #TEsting c        esting comments
+lzhu012@hammer.cs.ucr.edu$ ls #-a
+bin  exec.script  LICENSE  Makefile  README.md	src  tests
+lzhu012@hammer.cs.ucr.edu$ #Testing multiple flahs  gs
+lzhu012@hammer.cs.ucr.edu$ ls -a -l
+total 36
+drwx------ 6 lzhu012 classes 4096 Apr 19 17:45 .
+drwx------ 5 lzhu012 classes 4096 Apr 17 18:09 ..
+drwx------ 2 lzhu012 classes 4096 Apr 19 17:40 bin
+-rw------- 1 lzhu012 classes    0 Apr 19 17:45 exec.script
+drwx------ 8 lzhu012 classes 4096 Apr 19 17:06 .git
+-rw------- 1 lzhu012 classes 1472 Apr 13 22:08 LICENSE
+-rw------- 1 lzhu012 classes   94 Apr 15 21:18 Makefile
+-rw------- 1 lzhu012 classes 1256 Apr 19 17:11 README.md
+drwx------ 2 lzhu012 classes 4096 Apr 19 17:34 src
+drwx------ 2 lzhu012 classes 4096 Apr 19 17:41 tests
+lzhu012@hammer.cs.ucr.edu$ # Testing ib nalid     va  nvaloid     id command
+lzhu012@hammer.cs.ucr.edu$ a
+execvp failed: No such file or directory
+lzhu012@hammer.cs.ucr.edu$ # Showin  g ps for zombies
+lzhu012@hammer.cs.ucr.edu$ ps
+  PID TTY          TIME CMD
+18223 pts/4    00:00:00 bash
+18283 pts/4    00:00:00 rshell
+20831 pts/4    00:00:00 ps
+lzhu012@hammer.cs.ucr.edu$ # Exiting
+lzhu012@hammer.cs.ucr.edu$ exit
+~/cs100/rshell
+lzhu012@hammer $ exit
+exit
+
+Script done on Sun 19 Apr 2015 05:54:21 PM PDT

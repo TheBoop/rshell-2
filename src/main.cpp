@@ -237,5 +237,3 @@ int main()
 	}
 	return 0;
 }
-//nohlsearch
-//bug: &&& doesnt give error

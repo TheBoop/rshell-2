@@ -16,14 +16,16 @@ $ bin/rshell
 ```
 
 ##Known Bugs
-Connectors that are not doubles, e.g. &&& or ||| will not work properly
+Connectors that are not doubles will not work.
+e.g. `ls &&& ls` or anything similar will not work like how it does in bash.
+Instead it would run like `ls && ls`.
 
-Invalid commands will not display the same message as a normal terminal
+Invalid commands will not display the same message as a normal terminal.
 
 Commands that start with a connector does not work like bash does.
 e.g. `$ & ls` or `$ && ls` or `$ ls &` or `$ ls &&` or any of sort of combination
 of that will not work like bash does.
-Instead those commands will run ls normally.
+Instead those commands will run as `ls`.
 
 Multiple commands do not work
 e.g. `ls && pwd || ls` or anything that has multiple uses of `&&` or `||`
