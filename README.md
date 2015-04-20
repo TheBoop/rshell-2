@@ -21,10 +21,15 @@ Connectors that are not doubles, e.g. &&& or ||| will not work properly
 Invalid commands will not display the same message as a normal terminal
 
 Commands that start with a connector does not work like bash does.
-e.g. '$ & ls' or '$ && ls' or '$ ls &' or '$ ls &&' or any of sort of combination
+e.g. `$ & ls` or `$ && ls` or `$ ls &` or `$ ls &&` or any of sort of combination
 of that will not work like bash does.
 Instead those commands will run ls normally.
 
-echo "hello" doesnt output hello. Instead it outputs "hello"
+Multiple commands do not work
+e.g. `ls && pwd || ls` or anything that has multiple uses of `&&` or `||`
+will not work like bash does.
+Instead only the first command is ran.
 
-echo > file doesnt work
+`echo "hello"` doesnt output hello. Instead it outputs `"hello"`
+
+`echo > file` doesnt work
