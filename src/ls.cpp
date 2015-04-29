@@ -46,7 +46,7 @@ void paramcheck(int argc, char* argv[])
 }
 */
 
-void check(char argv[], vector<int> flags)
+vector<int> check(char argv[], vector<int>& flags)
 {
 	int a_param = 0;
 	int l_param = 0;
@@ -68,27 +68,51 @@ void check(char argv[], vector<int> flags)
 				R_param = 1;
 			}
 		}
-		flags.push_back(a_param);
-		flags.push_back(l_param);
-		flags.push_back(R_param);
 	}
+	flags.at(0) = a_param;
+	flags.at(1) = l_param;
+	flags.at(2) = R_param;
 	//display flags check
-	for(unsigned j = 0; j < flags.size(); j++)
-	{
-		cout << "j:" << j << " "  << flags.at(j) << endl;
-	}
+	//for(unsigned j = 0; j < flags.size(); j++)
+	//{
+	//	cout << "j:" << j << " "  << flags.at(j) << endl;
+	//}
+	return flags;
 }
 
+void ls(dirent *direntp, vector<int> flags)
+{
+	//cout << "d: "  << direntp->d_name[0] << " " << endl;
+	if(direntp->d_name[0] != '.' || flags.at(0) == 1)
+	{
+		if(flags.at(1) == 1)
+		{
+			cout << "-l detected" << endl;
+		}
+		cout << direntp->d_name << endl;
+	}
+	//if(direntp->d_name[0] == '.' && flags.at(0) == 1)
+	//{
+	//	cout << direntp->d_name << endl;
+	//}
+}
 
 int main(int argc, char* argv[])
 {
 	//paramcheck(argc, argv);
-	vector<int> flags;
+	vector<int> flags(3, 0);
 	for(int i = 1; i < argc; i++)
 	{
 		check(argv[i], flags);
 	}
-	const char *dir = ".";
+
+	//flags check
+	for(unsigned j = 0; j < flags.size(); j++)
+	{
+		cout << "j:" << j << " "  << flags.at(j) << endl;
+	}
+
+	char dir[] = ".";
 	DIR *dirp;
 	if(NULL == (dirp = opendir(dir)))
 	{
@@ -99,7 +123,7 @@ int main(int argc, char* argv[])
 	errno = 0;
 	while( NULL != (direntp = readdir(dirp)) )
 	{
-		cout << direntp->d_name << endl;
+		ls(direntp, flags);
 	}
 	if(errno != 0)
 	{
