@@ -99,15 +99,26 @@ int main()
 		char* token2;
 		char* save_1;
 		char* save_2;
+
+		//Gets the first command in the string
+		//e.g. Input = ls -a && ls
+		//token = ls -a;
 		token = strtok_r(in_cstr, delim, &save_1);
 		
 		while(token != NULL)
 		{
 			//cout << "Top of lopp" << endl;
 			//cout << "token: " << token << endl;
+			//Take out any whitespace
+			//e.g. token2 = ls
 			token2 = strtok_r(token, " ", &save_2);
 			//cout << "token2: " << token2 << endl;
-
+			
+			//Puts token2 into a vector for temporary storage
+			//Gets the rests of token if there are any
+			//e.g. token2 = -a
+			//temp[0] = ls
+			//temp[1] = -a
 			vector<string> temp;
 			while(token2 != NULL)
 			{
@@ -121,6 +132,12 @@ int main()
 			//}
 			//cout << endl;
 
+			//Puts everything from storage into a char**
+			//Since execvp takes char** as a parameter
+			//Also checks if input was exit, if so we need to exit prematurely
+			//e.g. argv[0] = ls
+			//argv[1] = -a
+			//argv[2] = \0
 			char** argv = new char*[temp.size()+1];
 			for(unsigned i = 0; i < temp.size(); i++)
 			{
@@ -155,9 +172,11 @@ int main()
 			else if(pid == 0)
 			{
 				//cout << "in child" << endl;
+				//if argv[0] was some invalid input
 				if(execvp(argv[0], argv) == -1)
 				{
 					perror("execvp failed");
+					//takes care of the false || true case
 					if(or_cnt == 1)
 					{
 						status = 3;
@@ -166,6 +185,7 @@ int main()
 						del_incstr(in_cstr);
 						_exit(1);
 					}
+					//takes care of the false && true case
 					if(and_cnt == 1)
 					{
 						status = 3;
@@ -181,6 +201,7 @@ int main()
 				}
 				else
 				{
+					//takes care of the true || true or false case
 					if(or_cnt == 1)
 					{
 						status = 3;
@@ -227,6 +248,7 @@ int main()
 					}
 					//Take in the next argument if there is any
 					////Go back to the top and repeat the process
+					//e.g. token = ls
 					token = strtok_r(NULL, delim, &save_1);
 				}
 			}
