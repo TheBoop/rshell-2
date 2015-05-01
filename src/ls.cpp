@@ -3,13 +3,17 @@
 #include <vector>
 #include <string.h>
 #include <stdlib.h>
+#include <cstdlib>
 #include <sys/stat.h> //stat
 #include <sys/types.h> //stat, opendir, readdir, closedir
+#include <unistd.h> //stat
 #include <errno.h> //perror
 #include <stdio.h> //perror
 #include <dirent.h> //readdir, closedir
-#include <unistd.h> //stat
 #include <fcntl.h> //perror
+#include <pwd.h> //getpwuid
+#include <grp.h> //getgrgid
+#include <time.h> //gettime
 
 using namespace std;
 
@@ -80,14 +84,80 @@ vector<int> check(char argv[], vector<int>& flags)
 	return flags;
 }
 
+void permissions(struct stat p)
+{
+	(S_IFDIR & p.st_mode) ? cout << "d" : 
+	(S_IFCHR & p.st_mode) ? cout << "c" :
+	(S_IFBLK & p.st_mode) ? cout << "b" : 
+	(S_IFLNK & p.st_mode) ? cout << "l" : cout << "-";
+	
+	(S_IRUSR & p.st_mode) ? cout << "r" : cout << "-";
+	(S_IWUSR & p.st_mode) ? cout << "w" : cout << "-";
+	(S_IXUSR & p.st_mode) ? cout << "x" : cout << "-";
+
+	(S_IRGRP & p.st_mode) ? cout << "r" : cout << "-";
+	(S_IWGRP & p.st_mode) ? cout << "w" : cout << "-";
+	(S_IXGRP & p.st_mode) ? cout << "x" : cout << "-";
+
+	(S_IROTH & p.st_mode) ? cout << "r" : cout << "-";
+	(S_IWOTH & p.st_mode) ? cout << "w" : cout << "-";
+	(S_IXOTH & p.st_mode) ? cout << "x" : cout << "-";
+}
+
 void ls(dirent *direntp, vector<int> flags)
 {
 	//cout << "d: "  << direntp->d_name[0] << " " << endl;
+	// -a
 	if(direntp->d_name[0] != '.' || flags.at(0) == 1)
 	{
+		//-l
 		if(flags.at(1) == 1)
 		{
-			cout << "-l detected" << endl;
+			struct stat fstat;
+			if(stat(direntp->d_name, &fstat) == -1)
+			{
+				perror("????");
+				exit(1);
+			}
+			
+			//permissions
+			permissions(fstat);
+			cout << "\t";
+
+			//user info
+			struct passwd *usrinfo;
+			if((usrinfo = getpwuid(fstat.st_uid)) == NULL)
+			{
+				perror("getpwuid() failed");
+				exit(1);
+			}
+			cout << usrinfo->pw_name << "\t";
+
+			//group info
+			struct group *grpinfo;
+			if((grpinfo = getgrgid(fstat.st_gid)) == NULL)
+			{
+				perror("getgrgid() failed");
+				exit(1);
+			}
+			cout << grpinfo->gr_name << "\t";
+
+			//size info
+			cout << fstat.st_size << "\t";
+
+			////time info
+			//struct tm* tminfo;
+			//char timestring[256];
+			//tm = localtime(&fstat.st_mtime);
+			//if(strftime(timestring, sizeof(timestring), "%b %d %H:%M:", tminfo) != 0)
+			//{
+			//	cout << timestring << "\t";
+			//}
+			//else
+			//{
+			//	perror("cant get time");
+			//	exit(1);
+			//}
 		}
 		cout << direntp->d_name << endl;
 	}
