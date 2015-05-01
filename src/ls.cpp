@@ -73,7 +73,7 @@ void permissions(struct stat p)
 	(S_IFCHR & p.st_mode) ? cout << "c" :
 	(S_IFBLK & p.st_mode) ? cout << "b" : 
 	(S_IFLNK & p.st_mode) ? cout << "l" : cout << "-";
-	
+
 	(S_IRUSR & p.st_mode) ? cout << "r" : cout << "-";
 	(S_IWUSR & p.st_mode) ? cout << "w" : cout << "-";
 	(S_IXUSR & p.st_mode) ? cout << "x" : cout << "-";
@@ -118,13 +118,18 @@ void ls(vector<string> file, vector<int> flags)
 		if(file.at(i).at(0) != '.' || flags.at(0) == 1)
 		{
 			//-l
-			if(stat(file.at(i).c_str(), &fstat) == -1)
-			{
-				perror("Cannot access");
-				exit(1);
-			}
+			//if(stat(file.at(i).c_str(), &fstat) == -1)
+			//{
+			//	perror("Cannot access");
+			//	exit(1);
+			//}
 			if(flags.at(1) == 1)
 			{
+				if(stat(file.at(i).c_str(), &fstat) == -1)
+				{
+					perror("Cannot access");
+					exit(1);
+				}
 				//permissions
 				permissions(fstat);
 				cout << " ";
@@ -151,7 +156,7 @@ void ls(vector<string> file, vector<int> flags)
 				cout << grpinfo->gr_name << " ";
 
 				//size info
-				cout.width(7); cout << right << fstat.st_size << "\t";
+				cout.width(7); cout << right << fstat.st_size << " ";
 
 				//time info
 				struct tm *tminfo;
@@ -159,7 +164,7 @@ void ls(vector<string> file, vector<int> flags)
 				tminfo = localtime(&fstat.st_mtime);
 				if(strftime(timebuf, sizeof(timebuf), "%b %d %H:%M", tminfo) != 0)
 				{
-					cout << timebuf << "\t";
+					cout << timebuf << " ";
 				}
 				else
 				{
@@ -229,8 +234,6 @@ int main(int argc, char* argv[])
 			perror("There was an error with closedir().");
 			exit(1);
 		}
-		file.clear();
-
 		if(i+1 != directory.size())
 		{
 			cout << endl;
