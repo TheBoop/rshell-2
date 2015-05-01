@@ -13,44 +13,12 @@
 #include <fcntl.h> //perror
 #include <pwd.h> //getpwuid
 #include <grp.h> //getgrgid
-#include <time.h> //gettime
+#include <time.h> //gettime strftime
+#include <algorithm> //sort
 
 using namespace std;
 
-/*
-void paramcheck(int argc, char* argv[])
-{
-	vector<string> param;
-	vector<string> arg;
-	//int a_param = 0;
-	//int l_param = 0;
-	//int R_param = 0;
-	for(int i = 1; i < argc; i++)
-	{
-		param.push_back(argv[i]);
-	}
-	for(unsigned i = 1; i < param.size(); i++)
-	{
-		if(param.at(i).at(0) == '-')
-		{
-			arg.push_back(param.at(i));
-		}
-	}
-	for(unsigned i = 0; i < param.size(); i++)
-	{
-		cout << "i:" << i << " " << param.at(i) << endl;
-	}
-	for(unsigned i = 0; i < arg.size(); i++)
-	{
-		if(arg.at(i).find('l') != string::npos)
-		{
-			cout << "found l" << endl;
-		}
-	}
-}
-*/
-
-vector<int> check(char argv[], vector<int>& flags)
+vector<int> check(char argv[], vector<int>& flags, vector<string>& path)
 {
 	int a_param = 0;
 	int l_param = 0;
@@ -73,15 +41,30 @@ vector<int> check(char argv[], vector<int>& flags)
 			}
 		}
 	}
+	else
+	{
+		//if argv is a path instead of a flag
+		string s_path = argv;
+		path.push_back(s_path);
+		//cout << "argv= " << argv << " " << "path.at(0) = " << path.at(0) << endl;
+	}
 	flags.at(0) = a_param;
 	flags.at(1) = l_param;
 	flags.at(2) = R_param;
-	//display flags check
-	//for(unsigned j = 0; j < flags.size(); j++)
-	//{
-	//	cout << "j:" << j << " "  << flags.at(j) << endl;
-	//}
 	return flags;
+}
+
+bool my_compare(string a, string b)
+{
+	for(unsigned i = 0; i < a.size(); i++)
+	{
+		a.at(i) = tolower(a.at(i));
+	}
+	for(unsigned i = 0; i < b.size(); i++)
+	{
+		b.at(i) = tolower(b.at(i));
+	}
+	return a < b;
 }
 
 void permissions(struct stat p)
@@ -104,106 +87,154 @@ void permissions(struct stat p)
 	(S_IXOTH & p.st_mode) ? cout << "x" : cout << "-";
 }
 
-void ls(dirent *direntp, vector<int> flags)
+void ls(vector<string> file, vector<int> flags)
 {
 	//cout << "d: "  << direntp->d_name[0] << " " << endl;
-	// -a
-	if(direntp->d_name[0] != '.' || flags.at(0) == 1)
+	struct stat fstat;
+	int totalblocks = 0;
+	for(unsigned i = 0; i < file.size(); i++)
 	{
-		//-l
-		if(flags.at(1) == 1)
+		if(file.at(i).at(0) != '.' || flags.at(0) == 1)
 		{
-			struct stat fstat;
-			if(stat(direntp->d_name, &fstat) == -1)
+			if(flags.at(1) == 1)
 			{
-				perror("????");
-				exit(1);
+				if(stat(file.at(i).c_str(), &fstat) == -1)
+				{
+					perror("Cannot access");
+					exit(1);
+				}
+				totalblocks += fstat.st_blocks;
 			}
-			
-			//permissions
-			permissions(fstat);
-			cout << "\t";
-
-			//user info
-			struct passwd *usrinfo;
-			if((usrinfo = getpwuid(fstat.st_uid)) == NULL)
-			{
-				perror("getpwuid() failed");
-				exit(1);
-			}
-			cout << usrinfo->pw_name << "\t";
-
-			//group info
-			struct group *grpinfo;
-			if((grpinfo = getgrgid(fstat.st_gid)) == NULL)
-			{
-				perror("getgrgid() failed");
-				exit(1);
-			}
-			cout << grpinfo->gr_name << "\t";
-
-			//size info
-			cout << fstat.st_size << "\t";
-
-			////time info
-			//struct tm* tminfo;
-			//char timestring[256];
-			//tm = localtime(&fstat.st_mtime);
-			//if(strftime(timestring, sizeof(timestring), "%b %d %H:%M:", tminfo) != 0)
-			//{
-			//	cout << timestring << "\t";
-			//}
-			//else
-			//{
-			//	perror("cant get time");
-			//	exit(1);
-			//}
 		}
-		cout << direntp->d_name << endl;
 	}
-	//if(direntp->d_name[0] == '.' && flags.at(0) == 1)
-	//{
-	//	cout << direntp->d_name << endl;
-	//}
+	if(flags.at(1) == 1)
+	{
+		cout << "Total " << totalblocks/2 << endl;
+	}
+	for(unsigned i = 0; i < file.size(); i++)
+	{
+		// -a
+		//cout << "file.at(i) = " << file.at(i) << " " << file[i].at(0) << endl;
+		if(file.at(i).at(0) != '.' || flags.at(0) == 1)
+		{
+			//-l
+			if(stat(file.at(i).c_str(), &fstat) == -1)
+			{
+				perror("Cannot access");
+				exit(1);
+			}
+			if(flags.at(1) == 1)
+			{
+				//permissions
+				permissions(fstat);
+				cout << " ";
+
+				//hard link count
+				cout << fstat.st_nlink << " ";
+
+				//user info
+				struct passwd *usrinfo;
+				if((usrinfo = getpwuid(fstat.st_uid)) == NULL)
+				{
+					perror("getpwuid() failed");
+					exit(1);
+				}
+				cout << usrinfo->pw_name << " ";
+
+				//group info
+				struct group *grpinfo;
+				if((grpinfo = getgrgid(fstat.st_gid)) == NULL)
+				{
+					perror("getgrgid() failed");
+					exit(1);
+				}
+				cout << grpinfo->gr_name << " ";
+
+				//size info
+				cout.width(7); cout << right << fstat.st_size << "\t";
+
+				//time info
+				struct tm *tminfo;
+				char timebuf[256];
+				tminfo = localtime(&fstat.st_mtime);
+				if(strftime(timebuf, sizeof(timebuf), "%b %d %H:%M", tminfo) != 0)
+				{
+					cout << timebuf << "\t";
+				}
+				else
+				{
+					perror("cant get time");
+					exit(1);
+				}
+			}
+			cout << file.at(i) << endl;
+		}
+	}
 }
 
 int main(int argc, char* argv[])
 {
-	//paramcheck(argc, argv);
+	//Tracks flags
 	vector<int> flags(3, 0);
+
+	//contains directory names
+	vector<string> directory;
+	
+	//Contains file names
+	vector<string> file;
+
 	for(int i = 1; i < argc; i++)
 	{
-		check(argv[i], flags);
+		check(argv[i], flags, directory);
 	}
 
 	//flags check
-	for(unsigned j = 0; j < flags.size(); j++)
-	{
-		cout << "j:" << j << " "  << flags.at(j) << endl;
-	}
+	//for(unsigned j = 0; j < flags.size(); j++)
+	//{
+	//	cout << "j:" << j << " "  << flags.at(j) << endl;
+	//}
 
-	char dir[] = ".";
+	//char dir[] = ".";
+	//string dirname = ".";
+	if(directory.size() == 0)
+	{
+		directory.push_back(".");
+	}
 	DIR *dirp;
-	if(NULL == (dirp = opendir(dir)))
-	{
-		perror("There was an error with opendir().");
-		exit(1);
-	}
 	dirent *direntp;
-	errno = 0;
-	while( NULL != (direntp = readdir(dirp)) )
+	string dname;
+	for(unsigned i = 0; i < directory.size(); i++)
 	{
-		ls(direntp, flags);
-	}
-	if(errno != 0)
-	{
-		perror("There was an error with readdir().");
-		exit(1);
-	}
-	if(-1 == closedir(dirp))
-	{
-		perror("There was an error with closedir().");
-		exit(1);
+		if(NULL == (dirp = opendir(directory.at(i).c_str())))
+		{
+			perror("There was an error with opendir().");
+			exit(1);
+		}
+		errno = 0;
+		while( NULL != (direntp = readdir(dirp)) )
+		{
+			//ls(direntp, flags);
+			dname = direntp->d_name;
+			file.push_back(dname);
+		}
+		sort(file.begin(), file.end(), my_compare);
+		ls(file, flags);
+		if(errno != 0)
+		{
+			perror("There was an error with readdir().");
+			exit(1);
+		}
+		if(-1 == closedir(dirp))
+		{
+			perror("There was an error with closedir().");
+			exit(1);
+		}
+		file.clear();
+
+		if(i+1 != directory.size())
+		{
+			cout << endl;
+		}
 	}
 	return 0;
 }
