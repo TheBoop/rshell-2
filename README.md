@@ -35,3 +35,28 @@ Instead only the first command is ran.
 `echo "hello"` doesnt output hello. Instead it outputs `"hello"`
 
 `echo > file` doesnt work
+
+# ls
+ls is a basic program that mimics the bash ls
+
+##Installation
+To install run the below code in your terminal
+
+```
+$ git clone  http://github.com/yourusername/rshell.git
+$ cd rshell
+$ git checkout hw1
+$ make
+$ bin/ls
+```
+
+#Known bugs
+An unsupported flag (e.g. not -a, -l -R or any combination of those)
+will cause the program to error and exit. This is intentional
+
+Formating for the flags is not perfect. Formating may be unorganized
+but still readable.
+
+The block counter total is mispositioned. Normally when running ls -l,
+the Total will be displayed at the top, my ls will display it at the
+bottom
