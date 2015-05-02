@@ -1,0 +1,247 @@
+Script started on Fri 01 May 2015 06:01:03 PM PDT
+~
+lzhu012@hammer $ cs100
+[0;91m
+===============================================================================
+|                                                                             |
+| You have enabled settings specific for cs100.  Everything you do is being   |
+| recorded to measure your progress in the class.                             |
+|                                                                             |
+| Important commands for the class:                                           |
+|   * calcgrade.sh          displays a detailed breakdown of your grade       |
+|   * checksyscalls.sh      is your cpp file doing proper error checking?     |
+|   * typespeed             practice typing unix commands                     |
+|                                                                             |
+| Important commands for general C++ programming:                             |
+|   * make                  don't call g++ manually; let make do the work!    |
+|   * gdb                   the GNU debugger                                  |
+|   * valgrind              get rid of your memory leaks                      |
+|   * cppcheck              static analysis tool                              |
+|   * man                   find help about any syscall / terminal command    |
+|                                                                             |
+===============================================================================
+[0m
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~[0;95m [0;36m$[0m cd cs100/rshell
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m make
+mkdir -p bin
+g++ -Wall -Werror -ansi -pedantic src/main.cpp -o bin/rshell
+mkdir -p bin
+g++ -Wall -Werror -ansi -pedantic src/ls.cpp -o bin/ls
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m #base [K[K[K[K[KTesting base case: [K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kesting only [K[K[K[K[Kb[Kbase case: ls
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m bin/ls
+bin                hw1script.txt      LICENSE            ls.script          Makefile           
+README.md          src                tests              
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m #te[K[KTesting the 3 flags
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m bin/ls -a
+.                  ..                 .git               .hw1script.txt.swp bin                
+hw1script.txt      LICENSE            ls.script          Makefile           README.md          src                
+tests              
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m bin/ls -a[Kl
+drwx------ 2 lzhu012 classes    4096 May 01 17:55 bin
+-rw------- 1 lzhu012 classes     367 May 01 17:16 hw1script.txt
+-rw------- 1 lzhu012 classes    1472 May 01 15:47 LICENSE
+-rw------- 1 lzhu012 classes       0 May 01 17:55 ls.script
+-rw------- 1 lzhu012 classes     174 May 01 15:52 Makefile
+-rw------- 1 lzhu012 classes    1256 May 01 15:47 README.md
+drwx------ 3 lzhu012 classes    4096 May 01 17:54 src
+drwx------ 2 lzhu012 classes    4096 May 01 15:47 tests
+Total 28
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m bin/ls -l[KR
+bin                hw1script.txt      LICENSE            ls.script          Makefile           
+README.md          src                tests              
+
+exec.script 
+
+a.out    dir1     ls       ls.cpp   main.cpp Makefile 
+
+dir1.txt 
+
+ls     rshell 
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m #Testing double para[K[K[K[Kflags [K
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m #Testing double flags[12Pbin/ls -R[Kl -R
+drwx------ 2 lzhu012 classes    4096 May 01 17:55 bin
+-rw------- 1 lzhu012 classes     367 May 01 17:16 hw1script.txt
+-rw------- 1 lzhu012 classes    1472 May 01 15:47 LICENSE
+-rw------- 1 lzhu012 classes       0 May 01 17:55 ls.script
+-rw------- 1 lzhu012 classes     174 May 01 15:52 Makefile
+-rw------- 1 lzhu012 classes    1256 May 01 15:47 README.md
+drwx------ 3 lzhu012 classes    4096 May 01 17:54 src
+drwx------ 2 lzhu012 classes    4096 May 01 15:47 tests
+Total 28
+
+-rw------- 1 lzhu012 classes    3573 May 01 15:47 exec.script
+Total 4
+
+-rwx------ 1 lzhu012 classes   59057 May 01 16:47 a.out
+drwx------ 2 lzhu012 classes    4096 May 01 17:08 dir1
+-rwx------ 1 lzhu012 classes   59939 May 01 17:46 ls
+-rw------- 1 lzhu012 classes    7282 May 01 17:52 ls.cpp
+-rw------- 1 lzhu012 classes    4975 May 01 15:51 main.cpp
+-rw------- 1 lzhu012 classes      57 May 01 15:50 Makefile
+Total 140
+
+-rw------- 1 lzhu012 classes       0 May 01 17:08 dir1.txt
+Total 0
+
+-rwx------ 1 lzhu012 classes   59939 May 01 17:55 ls
+-rwx------ 1 lzhu012 classes   27112 May 01 17:55 rshell
+Total 88
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m bin/ls -l -R[K[K[K[KR -l
+drwx------ 2 lzhu012 classes    4096 May 01 17:55 bin
+-rw------- 1 lzhu012 classes     367 May 01 17:16 hw1script.txt
+-rw------- 1 lzhu012 classes    1472 May 01 15:47 LICENSE
+-rw------- 1 lzhu012 classes       0 May 01 17:55 ls.script
+-rw------- 1 lzhu012 classes     174 May 01 15:52 Makefile
+-rw------- 1 lzhu012 classes    1256 May 01 15:47 README.md
+drwx------ 3 lzhu012 classes    4096 May 01 17:54 src
+drwx------ 2 lzhu012 classes    4096 May 01 15:47 tests
+Total 28
+
+-rw------- 1 lzhu012 classes    3573 May 01 15:47 exec.script
+Total 4
+
+-rwx------ 1 lzhu012 classes   59057 May 01 16:47 a.out
+drwx------ 2 lzhu012 classes    4096 May 01 17:08 dir1
+-rwx------ 1 lzhu012 classes   59939 May 01 17:46 ls
+-rw------- 1 lzhu012 classes    7282 May 01 17:52 ls.cpp
+-rw------- 1 lzhu012 classes    4975 May 01 15:51 main.cpp
+-rw------- 1 lzhu012 classes      57 May 01 15:50 Makefile
+Total 140
+
+-rw------- 1 lzhu012 classes       0 May 01 17:08 dir1.txt
+Total 0
+
+-rwx------ 1 lzhu012 classes   59939 May 01 17:55 ls
+-rwx------ 1 lzhu012 classes   27112 May 01 17:55 rshell
+Total 88
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m #Testing doubl [Ke flags co[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kcombined flags
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m bin/ls -lR
+drwx------ 2 lzhu012 classes    4096 May 01 17:55 bin
+-rw------- 1 lzhu012 classes     367 May 01 17:16 hw1script.txt
+-rw------- 1 lzhu012 classes    1472 May 01 15:47 LICENSE
+-rw------- 1 lzhu012 classes       0 May 01 17:55 ls.script
+-rw------- 1 lzhu012 classes     174 May 01 15:52 Makefile
+-rw------- 1 lzhu012 classes    1256 May 01 15:47 README.md
+drwx------ 3 lzhu012 classes    4096 May 01 17:54 src
+drwx------ 2 lzhu012 classes    4096 May 01 15:47 tests
+Total 28
+
+-rw------- 1 lzhu012 classes    3573 May 01 15:47 exec.script
+Total 4
+
+-rwx------ 1 lzhu012 classes   59057 May 01 16:47 a.out
+drwx------ 2 lzhu012 classes    4096 May 01 17:08 dir1
+-rwx------ 1 lzhu012 classes   59939 May 01 17:46 ls
+-rw------- 1 lzhu012 classes    7282 May 01 17:52 ls.cpp
+-rw------- 1 lzhu012 classes    4975 May 01 15:51 main.cpp
+-rw------- 1 lzhu012 classes      57 May 01 15:50 Makefile
+Total 140
+
+-rw------- 1 lzhu012 classes       0 May 01 17:08 dir1.txt
+Total 0
+
+-rwx------ 1 lzhu012 classes   59939 May 01 17:55 ls
+-rwx------ 1 lzhu012 classes   27112 May 01 17:55 rshell
+Total 88
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m bin/ls -lR[K[KRl
+drwx------ 2 lzhu012 classes    4096 May 01 17:55 bin
+-rw------- 1 lzhu012 classes     367 May 01 17:16 hw1script.txt
+-rw------- 1 lzhu012 classes    1472 May 01 15:47 LICENSE
+-rw------- 1 lzhu012 classes       0 May 01 17:55 ls.script
+-rw------- 1 lzhu012 classes     174 May 01 15:52 Makefile
+-rw------- 1 lzhu012 classes    1256 May 01 15:47 README.md
+drwx------ 3 lzhu012 classes    4096 May 01 17:54 src
+drwx------ 2 lzhu012 classes    4096 May 01 15:47 tests
+Total 28
+
+-rw------- 1 lzhu012 classes    3573 May 01 15:47 exec.script
+Total 4
+
+-rwx------ 1 lzhu012 classes   59057 May 01 16:47 a.out
+drwx------ 2 lzhu012 classes    4096 May 01 17:08 dir1
+-rwx------ 1 lzhu012 classes   59939 May 01 17:46 ls
+-rw------- 1 lzhu012 classes    7282 May 01 17:52 ls.cpp
+-rw------- 1 lzhu012 classes    4975 May 01 15:51 main.cpp
+-rw------- 1 lzhu012 classes      57 May 01 15:50 Makefile
+Total 140
+
+-rw------- 1 lzhu012 classes       0 May 01 17:08 dir1.txt
+Total 0
+
+-rwx------ 1 lzhu012 classes   59939 May 01 17:55 ls
+-rwx------ 1 lzhu012 classes   27112 May 01 17:55 rshell
+Total 88
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m #Testing combined fl[K[K[K flags and double flags
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m bin/ls - l[K[Kl -R -lR
+drwx------ 2 lzhu012 classes    4096 May 01 17:55 bin
+-rw------- 1 lzhu012 classes     367 May 01 17:16 hw1script.txt
+-rw------- 1 lzhu012 classes    1472 May 01 15:47 LICENSE
+-rw------- 1 lzhu012 classes       0 May 01 17:55 ls.script
+-rw------- 1 lzhu012 classes     174 May 01 15:52 Makefile
+-rw------- 1 lzhu012 classes    1256 May 01 15:47 README.md
+drwx------ 3 lzhu012 classes    4096 May 01 17:54 src
+drwx------ 2 lzhu012 classes    4096 May 01 15:47 tests
+Total 28
+
+-rw------- 1 lzhu012 classes    3573 May 01 15:47 exec.script
+Total 4
+
+-rwx------ 1 lzhu012 classes   59057 May 01 16:47 a.out
+drwx------ 2 lzhu012 classes    4096 May 01 17:08 dir1
+-rwx------ 1 lzhu012 classes   59939 May 01 17:46 ls
+-rw------- 1 lzhu012 classes    7282 May 01 17:52 ls.cpp
+-rw------- 1 lzhu012 classes    4975 May 01 15:51 main.cpp
+-rw------- 1 lzhu012 classes      57 May 01 15:50 Makefile
+Total 140
+
+-rw------- 1 lzhu012 classes       0 May 01 17:08 dir1.txt
+Total 0
+
+-rwx------ 1 lzhu012 classes   59939 May 01 17:55 ls
+-rwx------ 1 lzhu012 classes   27112 May 01 17:55 rshell
+Total 88
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m #Testing usu[K[K[Kunsupo[Kported flags
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m bin/ls -z
+Error: Unsupported flag
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m bin/ls -z -zzzzz
+Error: Unsupported flag
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m #Testing bot[K[K[Ko[Kcombinationf o[K[K[K of supported and unsupported flags
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m #[Kbin/ls -l -z -zz -la
+Error: Unsupported flag
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m #Testomg[K[K[King directory [Ks
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m vi[K[Kbin/ls src
+a.out    dir1     ls       ls.cpp   main.cpp Makefile 
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m bin/ls src ..
+a.out    dir1     ls       ls.cpp   main.cpp Makefile 
+
+labs      rshell    ucr-cs100 
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m bin/ls src ..[K[K[K/..
+bin                hw1script.txt      LICENSE            ls.script          Makefile           
+README.md          src                tests              
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m #Testing directory with flags
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m bin/ls src/[K -a
+.        ..       a.out    dir1     ls       ls.cpp   main.cpp Makefile 
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m bin/ls src -a[K[K[K[K[K[K=-[K[K-a src
+.        ..       a.out    dir1     ls       ls.cpp   main.cpp Makefile 
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m bin/ls -a src[K[K[K[K[K[Ksrc/../src/dir1 -a
+.        ..       dir1.txt 
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m bin/ls src/../src/dir1 -a[C[K[K[K[C-src/../src/dir1asrc/../src/dir1 src/../src/dir1
+.        ..       dir1.txt 
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m bin /[K[K/;ls[K[K[Kls[K[K[K[K[K[K#Testing invalid directories
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m bin/ls not[K[Kn[Kotdir[K[K[K[K[K[Kfakedir
+Error: opendir(): No such file or directory
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m bin/ls fakedir -a -l -la
+Error: opendir(): No such file or directory
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m bin/ls fakedir -a -l -la[K[K[K[K[K[K[K[K[K[K-fakedirafakedir fakedir-fakedirlfakedir fakedir-fakedirlfakedirafakedir fakedir
+Error: opendir(): No such file or directory
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m #t[KThis concludes t[Kmy testing script
+[s%%%%%%%%%%[u[0;32mlzhu012[0;36m@[0;32mcs100[0;36m:[0;32m~/cs100/rshell[0;95m (ls) [0;36m$[0m exit
+exit
+~
+lzhu012@hammer $ exit[K[K[K[Kquit
+bash: quit: command not found
+~
+lzhu012@hammer $ exit
+exit
+
+Script done on Fri 01 May 2015 06:09:07 PM PDT
