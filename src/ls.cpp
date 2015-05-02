@@ -25,6 +25,7 @@ vector<int> check(char argv[], vector<int>& flags, vector<string>& directory)
 	int a_param = 0;
 	int l_param = 0;
 	int R_param = 0;
+	//cout << "begin" << endl;
 	if(argv[0] == '-')
 	{
 		if(argv[1] == '\0')
@@ -33,6 +34,7 @@ vector<int> check(char argv[], vector<int>& flags, vector<string>& directory)
 		}
 		for(int i = 1; argv[i] != '\0'; i++)
 		{
+			//cout << "argv[i]: " << argv[i] << endl;
 			if(argv[i] == 'a')
 			{
 				a_param = 1;
@@ -50,18 +52,18 @@ vector<int> check(char argv[], vector<int>& flags, vector<string>& directory)
 				cout << "Error: Unsupported flag" << endl;
 				exit(1);
 			}
+			//cout << "end for" << endl;
 		}
 	}
 	else
 	{
 		//if argv is a path instead of a flag
-		string s_dir = argv;
 		directory.push_back(argv);
 		//cout << "argv= " << argv << " " << "path.at(0) = " << path.at(0) << endl;
 	}
-	flags.at(0) = a_param;
-	flags.at(1) = l_param;
-	flags.at(2) = R_param;
+	if(flags.at(0) != 1) flags.at(0) = a_param;
+	if(flags.at(1) != 1) flags.at(1) = l_param;
+	if(flags.at(2) != 1) flags.at(2) = R_param;
 	return flags;
 }
 
@@ -151,9 +153,9 @@ void ls(vector<string> file, vector<int> flags, vector<string>& rev_dir, string 
 		if(file.at(i).at(0) != '.' || flags.at(0) == 1)
 		{
 			//-l
-			string nrev_sdir = rev_sdir;
-			nrev_sdir.append("/");
-			nrev_sdir.append(file.at(i));
+			string nrev_sdir = rev_sdir + "/" + file.at(i);
+			//nrev_sdir.append("/");
+			//nrev_sdir.append(file.at(i));
 			if(stat(nrev_sdir.c_str(), &fstat) == -1)
 			{
 				perror("Error: stat()");
@@ -163,6 +165,7 @@ void ls(vector<string> file, vector<int> flags, vector<string>& rev_dir, string 
 			if(flags.at(2) == 1 && S_ISDIR(fstat.st_mode) && file.at(i) != "." && file.at(i) != "..")
 			{
 				//cout << rev_sdir << ": " << endl;
+				//similar to recursion
 				rev_dir.push_back(nrev_sdir);
 			}
 			if(flags.at(1) == 1)
@@ -212,7 +215,7 @@ void ls(vector<string> file, vector<int> flags, vector<string>& rev_dir, string 
 			}
 			if(flags.at(1) == 1)
 			{
-				cout << file.at(i) << endl;
+			  cout << file.at(i) << endl;
 			}
 			//cout << "size: " << file.at(i).size() << " ";
 			//cur_len = file.at(i).size();
